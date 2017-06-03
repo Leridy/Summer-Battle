@@ -6,4 +6,14 @@ via **Rubbish Team** @Unique Hackday2017
 ### Description
 降温大作战是一款基于HTML5的网页端轻游戏。炎炎夏日，每天的环境温度都会有先升后降的变化，游戏中我们需要在环境温度的基础上让自己所操控的角色吃冰淇淋降温解暑或吃辣椒升温，维持体温在正常范围内并度过一天（5min）即可顺利过关。
 
+##### 欢迎页
 ![欢迎页](demo/login.png)
+
+##### 白天
+![白天](demo/daytime.png)
+
+##### 夜晚
+![夜晚](demo/night.png)
+
+##### 游戏结束
+![游戏结束](demo/gameover.png)
