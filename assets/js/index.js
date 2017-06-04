@@ -16,14 +16,6 @@ $(function () {
         "#008678",
         "#D40045",
         "#7ed321",
-        "rgb(200,200,169)",
-        "rgb(254,67,101)",
-        "rgb(131,175,155)",
-        "rgb(249,205,173)",
-        "rgb(250,227,113)",
-        "rgb(38,157,128)",
-        "rgb(6,128,67)",
-        "rgb(137,157,192)"
     ];
     
     const FOODS_IMG = [
@@ -33,7 +25,7 @@ $(function () {
         "assets/img/pepper2.png"
     ];
     
-     var isDie = false;
+    var isDie = false;
     
     
     class Ball {
@@ -50,85 +42,41 @@ $(function () {
             this.element.dataset.temp = temp;
             this.element.dataset.blood = blood;
             
-            let self = this;
-            let temp_content = 35;
-            let $blood_line = $('.blood-line');
-            $blood_line.css({backgroundSize:'100%'});
-            $blood_line.html(self.element.dataset.blood);
-            
-            
-            this.handleInterval1 = setInterval(function () {
-                if(temp_content<50){
-                    temp_content++;
-                }
-                
-                let temp = self.element.dataset.temp;
-                if (parseInt(self.element.dataset.blood) <= 0 || temp > 42) {
-                    self.element.style.backgroundColor = '#bbb';
-                    isDie = true;
-                    $('.mask').css({'top':'0'});
-                } else if (34 < temp && temp <= 37 && self.element.dataset.blood < 100) {
-                    self.element.style.backgroundColor = '#7ed321';
-                    self.element.dataset.blood = parseInt(self.element.dataset.blood) + 1;
-                } else if (37 < temp && temp <= 39) {
-                    self.element.style.backgroundColor = '#f96';
-                    self.element.dataset.blood = parseInt(self.element.dataset.blood) - 5;
-                } else if (39 < temp && temp <= 41) {
-                    self.element.style.backgroundColor = '#cc0000';
-                    self.element.dataset.blood = parseInt(self.element.dataset.blood) - 10;
-                } else if (32 < temp && temp <= 34) {
-                    self.element.style.backgroundColor = '#50e3c2';
-                    self.element.dataset.blood = parseInt(self.element.dataset.blood) - 5;
-                } else if (30 < temp && temp <= 32) {
-                    self.element.style.backgroundColor = '#4a90e2';
-                    self.element.dataset.blood = parseInt(self.element.dataset.blood) - 10;
-                }
-                
-                
-                $blood_line.css({backgroundSize:self.element.dataset.blood+'% 100%'});
-                $blood_line.html(self.element.dataset.blood);
-                $('#temp-content').html(temp_content+"<sup>℃</sup>");
-                
-                
-            }, 2000);
-            
-            this.handleInterval2 = setInterval(function () {
-                self.element.dataset.temp = parseInt(self.element.dataset.temp) + 2;
-                self.element.innerHTML = self.element.dataset.temp + "℃";
-            }, 5000);
-            
+            this.checkALive();
+            this.checkBallTemp();
+            this.ballTempIncrease();
             
         }
         
         move() {
-            if (1) {
-                $(this.element).velocity("stop");
-                let left = event.pageX - (parseFloat(this.size) / 2);
-                let top = event.pageY - (parseFloat(this.size) / 2);
-                var times = this.size / INIT_SPEED;
-                $(this.element).velocity({
-                    left: left, top: top
-                }, {
-                    duration: times,
-                    easing: "linear",
-                    progress: function () {
-                        for (let i = 0; i < foods.length; i++) {
-                            if (Food.isEat(ball, foods[i])) {
-                                ball.eat(foods[i]);
-                                foods[i].disappear();
-                                foods.splice(i, 1);
-                            }
+            
+            $(this.element).velocity("stop");
+            let left = event.pageX - (parseFloat(this.size) / 2);
+            let top = event.pageY - (parseFloat(this.size) / 2);
+            var times = this.size / INIT_SPEED;
+            $(this.element).velocity({
+                left: left, top: top
+            }, {
+                duration: times,
+                easing: "linear",
+                progress: function () {
+                    for (let i = 0; i < foods.length; i++) {
+                        if (Food.isEat(ball, foods[i])) {
+                            ball.eat(foods[i]);
+                            foods[i].disappear();
+                            foods.splice(i, 1);
                         }
-                    },
-                });
-                return true;
-            } else return false;
+                    }
+                },
+            });
+            return true;
+            
         }
         
         eat(food) {
             let change_size = parseFloat(this.size) + food.size * INCREASE_SPEED;
             let value = parseInt(food.element.dataset.value);
-            let self = this;
+            const self = this;
             this.size = change_size;
             
             
@@ -161,15 +109,89 @@ $(function () {
                 this.element.style.backgroundColor = '#50e3c2'
             } else if (30 < temp && temp <= 32) {
                 this.element.style.backgroundColor = '#4a90e2'
-            } else {
-                this.element.style.backgroundColor = '#bbb';
-                isDie = true;
-                $('.mask').css({'top':'0'});
             }
             
             
             this.element.innerHTML = this.element.dataset.temp + "℃";
             
+        }
+        
+        checkALive() {
+            const self = this;
+            this.handleInterval3 = setInterval(
+                function () {
+                    if (parseInt(self.element.dataset.blood) <= 0 || self.element.dataset.temp > 42 || self.element.dataset.temp < 30) {
+                        self.element.style.backgroundColor = '#bbb';
+                        isDie = true;
+                        $('.mask').css({'top': '0'});
+                    }
+                }, 500);
+            
+        }
+        
+        checkBallTemp() {
+            const self = this;
+            let temp_content = 35;
+            let $blood_line = $('.blood-line');
+            let $temp_content = $('#temp-content');
+            let $body = $('body');
+            
+            this.temp_content_flag = false;
+            
+            $blood_line.css({backgroundSize: '100%'});
+            $blood_line.html(self.element.dataset.blood);
+            
+            this.handleInterval1 = setInterval(function () {
+                let temp = self.element.dataset.temp;
+                if (temp_content === 50 || temp_content === 35) {
+                    self.temp_content_flag = !self.temp_content_flag;
+                }
+                
+    
+                if (self.temp_content_flag) {
+                    temp_content++;
+                    $body.css({backgroundColor:'#fff'});
+                } else {
+                    temp_content--;
+                    $body.css({backgroundColor:'#000'});
+                }
+                
+                if (34 < temp && temp <= 37 && self.element.dataset.blood < 100) {
+                    self.element.style.backgroundColor = '#7ed321';
+                    self.element.dataset.blood = parseInt(self.element.dataset.blood) + 1;
+                } else if (37 < temp && temp <= 39) {
+                    self.element.style.backgroundColor = '#f96';
+                    self.element.dataset.blood = parseInt(self.element.dataset.blood) - 5;
+                } else if (39 < temp && temp <= 41) {
+                    self.element.style.backgroundColor = '#cc0000';
+                    self.element.dataset.blood = parseInt(self.element.dataset.blood) - 10;
+                } else if (32 < temp && temp <= 34) {
+                    self.element.style.backgroundColor = '#50e3c2';
+                    self.element.dataset.blood = parseInt(self.element.dataset.blood) - 5;
+                } else if (30 < temp && temp <= 32) {
+                    self.element.style.backgroundColor = '#4a90e2';
+                    self.element.dataset.blood = parseInt(self.element.dataset.blood) - 10;
+                }
+                
+                $blood_line.css({backgroundSize: self.element.dataset.blood + '% 100%'});
+                $blood_line.html(self.element.dataset.blood);
+                
+                $temp_content.html(temp_content + "<sup>℃</sup>");
+                
+            }, 2000);
+        };
+        
+        ballTempIncrease() {
+            const self = this;
+            this.handleInterval2 = setInterval(function () {
+                if(self.temp_content_flag){
+                    self.element.dataset.temp = parseInt(self.element.dataset.temp) + 2;
+                }else{
+                    self.element.dataset.temp = parseInt(self.element.dataset.temp) - 2;
+                }
+               
+                self.element.innerHTML = self.element.dataset.temp + "℃";
+            }, 5000);
         }
         
         
@@ -222,7 +244,12 @@ $(function () {
     function makeFood(num) {
         for (let i = 0; i < num; i++) {
             var food_div = document.createElement("div");
-            food_div.setAttribute("class", "food");
+            if (i % 2 === 0) {
+                food_div.setAttribute("class", "food1");
+            } else {
+                food_div.setAttribute("class", "food2");
+            }
+            
             document.body.insertBefore(food_div, document.body.firstChild);
             let size = 35;
             let rotate = Math.random() * 360;
@@ -245,10 +272,10 @@ $(function () {
         
         if (isDie == false) {
             ball.move();
-            console.log('fadsfasd')
         } else {
             clearInterval(ball.handleInterval1);
             clearInterval(ball.handleInterval2);
+            clearInterval(ball.handleInterval3);
             $(document).unbind();
             document.querySelector('#fail').play();
             

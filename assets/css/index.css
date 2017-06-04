@@ -10,7 +10,16 @@ html{
     display: flex;
     width: 100%;
     height: 100%;
-    background-color: #000000;
+    overflow: hidden;
+    /*background-color: #000000;*/
+}
+
+body{
+    -webkit-transition: background-color .8s;
+    -moz-transition: background-color .8s;
+    -ms-transition: background-color .8s;
+    -o-transition: background-color .8s;
+    transition: background-color .8s;
 }
 .ball{
     position: absolute;
@@ -19,6 +28,7 @@ html{
     border-radius: 50%;
     text-align: center;
     font-size: 18px;
+    font-weight: bold;
     transition: background .5s;
     /*animation: rotate 3s linear infinite alternate;*/
 }
@@ -55,10 +65,18 @@ html{
     animation: rotate 3s infinite;
 }
 
-.food,.bomb{
+.food1,.bomb{
     position: absolute;
     background-size: contain;
     background-repeat: no-repeat;
+    animation: spark 1s infinite alternate;
+}
+
+.food2{
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: shake 1s infinite  .5s alternate;
 }
 
 @-webkit-keyframes plus {
@@ -133,6 +151,46 @@ html{
     }
 
 }
+
+@-webkit-keyframes spark {
+    from{
+        transform: scale(.9);
+    }
+    to{
+        transform: scale(1.1);
+    }
+
+}
+
+@keyframes spark {
+    from{
+        transform: scale(.9);
+    }
+    to{
+        transform: scale(1.1);
+    }
+}
+
+@-webkit-keyframes shake {
+    from{
+        transform: rotate(20deg);
+    }
+    to{
+        transform: rotate(-20deg);
+    }
+
+}
+
+@keyframes shake {
+    from{
+        transform: rotate(20deg);
+    }
+    to{
+        transform: rotate(-20deg);
+    }
+}
+
+
 .blood-line{
     position: absolute;
     left: 0;
@@ -169,7 +227,7 @@ html{
     font-size: 34px;
     margin-right:10px;
     color:#67ff00;
-    background-color: #000000;
+    /*background-color: #000000;*/
 }
 
 .mask{
